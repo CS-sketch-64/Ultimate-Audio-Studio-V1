@@ -1,0 +1,1469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ultimate Audio FX Studio</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #121212;
+      color: #ffffff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 25px 15px;
+      margin: 0;
+    }
+    .header-container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      max-width: 860px;
+      margin-bottom: 10px;
+    }
+    h1 { margin: 0; color: #00e676; font-size: 1.8rem; }
+    .btn-guide {
+      background: #2a2a2a;
+      border: 1px solid #00e676;
+      color: #00e676;
+      padding: 8px 14px;
+      border-radius: 20px;
+      font-weight: bold;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.9rem;
+    }
+    .btn-guide:hover { background: #00e676; color: #000; }
+    p.subtitle { color: #aaa; margin-bottom: 20px; font-size: 0.95rem; text-align: center; }
+    
+    .card {
+      background-color: #1e1e1e;
+      border-radius: 12px;
+      padding: 25px;
+      width: 100%;
+      max-width: 860px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+      border: 1px solid #333;
+      box-sizing: border-box;
+    }
+    .section {
+      margin-bottom: 15px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    input[type="file"], select, button, input[type="text"] {
+      background: #2a2a2a;
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid #444;
+      color: #fff;
+      font-size: 0.95rem;
+    }
+    button { cursor: pointer; }
+    
+    .mic-controls {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .btn-mic {
+      flex: 1;
+      background: #1a2733;
+      border: 1px solid #29b6f6;
+      color: #29b6f6;
+      font-weight: bold;
+      padding: 10px;
+      border-radius: 6px;
+      transition: all 0.2s ease;
+    }
+    .btn-mic.active {
+      background: #29b6f6;
+      color: #000;
+    }
+    .btn-monitor {
+      flex: 1;
+      background: #332a1a;
+      border: 1px solid #ffb74d;
+      color: #ffb74d;
+      font-weight: bold;
+      padding: 10px;
+      border-radius: 6px;
+      transition: all 0.2s ease;
+    }
+    .btn-monitor.active {
+      background: #ffb74d;
+      color: #000;
+    }
+    .btn-fx-mode {
+      flex: 1;
+      background: #221f3b;
+      border: 1px solid #b388ff;
+      color: #b388ff;
+      font-weight: bold;
+      padding: 10px;
+      border-radius: 6px;
+      transition: all 0.2s ease;
+    }
+    .btn-fx-mode.active {
+      background: #b388ff;
+      color: #000;
+    }
+
+    canvas {
+      width: 100%;
+      height: 100px;
+      background: #0d0d0d;
+      border-radius: 8px;
+      border: 1px solid #333;
+      margin-bottom: 15px;
+    }
+    audio { width: 100%; margin-bottom: 15px; }
+    
+    .vol-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin-bottom: 15px;
+      background: #242424;
+      padding: 15px;
+      border-radius: 8px;
+      border: 1px solid #444;
+    }
+    .vol-box {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .vol-box label {
+      font-size: 0.9rem;
+      font-weight: bold;
+      color: #00e676;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 12px;
+      margin-top: 10px;
+    }
+    .slider-card {
+      background: #282828;
+      padding: 10px;
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+      position: relative;
+    }
+    .slider-card.fx { background: #1f3328; border: 1px solid #00e676; }
+    .slider-card.vocal-fx { background: #1a2a38; border: 1px solid #29b6f6; }
+    .slider-card.special { background: #2a1f3d; border: 1px solid #7c4dff; }
+    .slider-card label { font-size: 0.8rem; font-weight: bold; text-align: center; }
+    .slider-card span { font-size: 0.7rem; color: #888; }
+    input[type="range"] { width: 100%; cursor: pointer; }
+    .val-display { font-size: 0.8rem; color: #00e676; }
+    .vocal-fx .val-display { color: #29b6f6; }
+    .special .val-display { color: #b388ff; }
+
+    .btn-mute {
+      background: #3a2222;
+      border: 1px solid #ff5252;
+      color: #ff5252;
+      font-size: 0.7rem;
+      padding: 3px 8px;
+      border-radius: 4px;
+      margin-top: 2px;
+      font-weight: bold;
+    }
+    .btn-mute.active { background: #ff5252; color: #000000; }
+
+    .sfx-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+      margin-top: 10px;
+    }
+    .sfx-card {
+      background: #231c10;
+      border: 1px solid #ffb74d;
+      padding: 12px;
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .sfx-header {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .sfx-key-badge {
+      background: #ffb74d;
+      color: #000;
+      font-weight: bold;
+      border-radius: 4px;
+      padding: 2px 6px;
+      font-size: 0.75rem;
+    }
+    .sfx-title-input {
+      flex: 1;
+      padding: 4px 8px;
+      font-size: 0.85rem;
+      background: #18130b;
+      border: 1px solid #554020;
+    }
+    .btn-sfx-play {
+      background: #ffb74d;
+      border: none;
+      color: #000;
+      font-weight: bold;
+      padding: 10px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .btn-sfx-play:active { transform: scale(0.97); }
+
+    .export-box {
+      margin-top: 20px;
+      background: #242424;
+      padding: 15px;
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      border: 1px solid #444;
+    }
+    .export-controls { display: flex; gap: 10px; }
+    .btn-download {
+      flex: 2;
+      background-color: #00e676;
+      color: #000;
+      border: none;
+      padding: 12px;
+      border-radius: 6px;
+      font-size: 0.95rem;
+      font-weight: bold;
+    }
+    .btn-download:disabled { background-color: #555; color: #888; cursor: not-allowed; }
+
+    .section-header {
+      font-size: 1.05rem;
+      font-weight: bold;
+      padding: 8px 12px;
+      border-radius: 6px;
+      margin-top: 15px;
+    }
+    .header-track { background: #132b1d; border-left: 4px solid #00e676; color: #00e676; }
+    .header-vocal { background: #152736; border-left: 4px solid #29b6f6; color: #29b6f6; }
+
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.85);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      z-index: 999;
+    }
+    .modal-content {
+      background: #1e1e1e;
+      border: 1px solid #00e676;
+      border-radius: 12px;
+      max-width: 600px;
+      width: 100%;
+      max-height: 80vh;
+      overflow-y: auto;
+      padding: 25px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+    }
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #333;
+      padding-bottom: 10px;
+      margin-bottom: 15px;
+    }
+    .modal-header h2 { margin: 0; color: #00e676; }
+    .btn-close {
+      background: transparent;
+      border: none;
+      color: #aaa;
+      font-size: 1.4rem;
+      cursor: pointer;
+    }
+    .modal-body h4 { color: #ffb74d; margin: 12px 0 4px 0; }
+    .modal-body p, .modal-body ul { color: #ccc; font-size: 0.9rem; line-height: 1.5; margin-top: 4px; }
+    .tip-box {
+      background: #212c1e;
+      border: 1px solid #00e676;
+      padding: 10px 12px;
+      border-radius: 6px;
+      margin-top: 8px;
+      font-size: 0.85rem;
+      color: #a3f7bf;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header-container">
+    <h1>Ultimate Audio FX Studio</h1>
+    <button class="btn-guide" onclick="toggleModal(true)">📖 Guide & Help</button>
+  </div>
+  <p class="subtitle">Independent Track & Vocal FX Chains, Pitch & Speed Controls, Soundboard, & Recording Studio.</p>
+
+  <div class="card">
+    <div class="section">
+      <label for="audioFile"><strong>1. Select Audio Track File OR Live Microphone Input:</strong></label>
+      <input type="file" id="audioFile" accept="audio/*" />
+      
+      <div class="mic-controls">
+        <button id="toggleMicBtn" class="btn-mic" onclick="toggleMicrophone()">🎤 Enable Microphone Input</button>
+        <button id="toggleFxModeBtn" class="btn-fx-mode active" onclick="toggleMicFxMode()">🎛️ Mic FX: Vocal Sliders Active</button>
+        <button id="toggleMonitorBtn" class="btn-monitor active" onclick="toggleMicMonitoring()">🎧 Live Monitoring: ON</button>
+      </div>
+    </div>
+
+    <div class="vol-container">
+      <div class="vol-box">
+        <label for="trackVol">🎵 Music Track Volume</label>
+        <input type="range" id="trackVol" min="0" max="150" value="100" step="1" />
+        <span class="val-display" id="trackVolVal">100 %</span>
+      </div>
+      <div class="vol-box">
+        <label for="micVol" style="color: #29b6f6;">🎙️ Microphone Volume</label>
+        <input type="range" id="micVol" min="0" max="200" value="100" step="1" />
+        <span class="val-display" id="micVolVal" style="color: #29b6f6;">100 %</span>
+      </div>
+    </div>
+
+    <canvas id="visualizer"></canvas>
+
+    <audio id="audioPlayer" controls></audio>
+
+    <div class="section" style="margin-top: 10px;">
+      <label for="presetSelect"><strong>2. Track Sound FX Presets:</strong></label>
+      <select id="presetSelect">
+        <option value="flat">Default / Normal Audio</option>
+        <option value="megaphone">Megaphone / Loudspeaker</option>
+        <option value="arena">Indoor Arena (Huge Echo & Bass)</option>
+        <option value="concert">Outdoor Concert Stage</option>
+        <option value="spatial">8D Surround Sound Experience</option>
+        <option value="harmony">Lush Vocal Harmonizer</option>
+        <option value="radio">AM Radio</option>
+        <option value="vintage">Super Vintage Phonograph (1920s)</option>
+        <option value="walkie">Walkie-Talkie</option>
+        <option value="meme">Meme Bass Boost & Crunch</option>
+        <option value="distortion">Super Weird Overdrive</option>
+        <option value="underwater">Underwater / Muffled</option>
+        <option value="squeaky">High Pitch Mouse / Chipmunk</option>
+        <option value="deep">Deep Demon Voice</option>
+      </select>
+    </div>
+
+    <hr style="border: 0; border-top: 1px solid #333; margin: 20px 0;" />
+
+    <div class="section-header header-track">🎵 TRACK FX CONTROLS (Applies to Audio File Track)</div>
+    
+    <div class="grid">
+      <div class="slider-card fx">
+        <label for="tempo">Speed / Tempo</label>
+        <span>No Pitch Shift</span>
+        <input type="range" id="tempo" min="0.5" max="2.0" value="1.0" step="0.05" />
+        <div class="val-display" id="tempoVal">1.0x</div>
+      </div>
+
+      <div class="slider-card fx">
+        <label for="pitch">Pitch / Rate</label>
+        <span>Classic Tape</span>
+        <input type="range" id="pitch" min="0.5" max="2.0" value="1.0" step="0.05" />
+        <div class="val-display" id="pitchVal">1.0x</div>
+      </div>
+
+      <div class="slider-card fx">
+        <label for="eightD">8D Audio</label>
+        <span>360° Pan</span>
+        <input type="range" id="eightD" min="0" max="100" value="0" step="1" />
+        <div class="val-display" id="eightDVal">0 %</div>
+      </div>
+
+      <div class="slider-card fx">
+        <label for="wonky">Wonky Wobble</label>
+        <span>Choppy Pitch Flutter</span>
+        <input type="range" id="wonky" min="0" max="100" value="0" step="1" />
+        <div class="val-display" id="wonkyVal">0 %</div>
+      </div>
+
+      <div class="slider-card fx">
+        <label for="echo">Tape Echo</label>
+        <span>Repeat Delay</span>
+        <input type="range" id="echo" min="0" max="100" value="0" step="1" />
+        <div class="val-display" id="echoVal">0 %</div>
+      </div>
+
+      <div class="slider-card fx">
+        <label for="reverb">Room Reverb</label>
+        <span>Space Echo</span>
+        <input type="range" id="reverb" min="0" max="100" value="0" step="1" />
+        <div class="val-display" id="reverbVal">0 %</div>
+      </div>
+
+      <div class="slider-card fx">
+        <label for="vinyl">Film Pops</label>
+        <span>Vinyl Static</span>
+        <input type="range" id="vinyl" min="0" max="100" value="0" step="1" />
+        <div class="val-display" id="vinylVal">0 %</div>
+      </div>
+
+      <div class="slider-card special">
+        <label for="distortion">Distortion</label>
+        <span>Crunch</span>
+        <input type="range" id="distortion" min="0" max="100" value="0" step="1" />
+        <div class="val-display" id="distortionVal">0 %</div>
+      </div>
+    </div>
+
+    <p style="font-size: 0.85rem; color: #888; margin-top: 10px;">Track Manual Equalizer (with Mute Toggles):</p>
+    <div class="grid">
+      <div class="slider-card">
+        <label for="subBass">Sub-Bass</label>
+        <span>60 Hz</span>
+        <input type="range" id="subBass" min="-12" max="12" value="0" step="1" />
+        <div class="val-display" id="subBassVal">0 dB</div>
+        <button class="btn-mute" id="mute_subBass" onclick="toggleMuteTrack('subBass')">MUTE</button>
+      </div>
+
+      <div class="slider-card">
+        <label for="bass">Bass / Drums</label>
+        <span>250 Hz</span>
+        <input type="range" id="bass" min="-12" max="12" value="0" step="1" />
+        <div class="val-display" id="bassVal">0 dB</div>
+        <button class="btn-mute" id="mute_bass" onclick="toggleMuteTrack('bass')">MUTE</button>
+      </div>
+
+      <div class="slider-card">
+        <label for="mids">Mid Range</label>
+        <span>1000 Hz</span>
+        <input type="range" id="mids" min="-12" max="12" value="0" step="1" />
+        <div class="val-display" id="midsVal">0 dB</div>
+        <button class="btn-mute" id="mute_mids" onclick="toggleMuteTrack('mids')">MUTE</button>
+      </div>
+
+      <div class="slider-card">
+        <label for="presence">Lead / Clarity</label>
+        <span>4000 Hz</span>
+        <input type="range" id="presence" min="-12" max="12" value="0" step="1" />
+        <div class="val-display" id="presenceVal">0 dB</div>
+        <button class="btn-mute" id="mute_presence" onclick="toggleMuteTrack('presence')">MUTE</button>
+      </div>
+
+      <div class="slider-card">
+        <label for="treble">Treble / Air</label>
+        <span>10000 Hz</span>
+        <input type="range" id="treble" min="-12" max="12" value="0" step="1" />
+        <div class="val-display" id="trebleVal">0 dB</div>
+        <button class="btn-mute" id="mute_treble" onclick="toggleMuteTrack('treble')">MUTE</button>
+      </div>
+    </div>
+
+    <hr style="border: 0; border-top: 1px solid #333; margin: 25px 0;" />
+
+    <div class="section-header header-vocal">🎙️ VOCAL FX CONTROLS (Applies to Microphone Input)</div>
+    
+    <div class="grid">
+      <div class="slider-card vocal-fx">
+        <label for="vocalPitch">Pitch Shift</label>
+        <span>Vocal Pitch Offset</span>
+        <input type="range" id="vocalPitch" min="-12" max="12" value="0" step="1" />
+        <div class="val-display" id="vocalPitchVal">0 semitones</div>
+      </div>
+
+      <div class="slider-card vocal-fx">
+        <label for="harmonizer">Vocal Harmonizer</label>
+        <span>Chorus Choir</span>
+        <input type="range" id="harmonizer" min="0" max="100" value="0" step="1" />
+        <div class="val-display" id="harmonizerVal">0 %</div>
+      </div>
+
+      <div class="slider-card vocal-fx">
+        <label for="vocalWonky">Wonky Wobble</label>
+        <span>Choppy Pitch Flutter</span>
+        <input type="range" id="vocalWonky" min="0" max="100" value="0" step="1" />
+        <div class="val-display" id="vocalWonkyVal">0 %</div>
+      </div>
+
+      <div class="slider-card vocal-fx">
+        <label for="vocalEcho">Tape Echo</label>
+        <span>Vocal Delay</span>
+        <input type="range" id="vocalEcho" min="0" max="100" value="0" step="1" />
+        <div class="val-display" id="vocalEchoVal">0 %</div>
+      </div>
+
+      <div class="slider-card vocal-fx">
+        <label for="vocalReverb">Room Reverb</label>
+        <span>Studio Space</span>
+        <input type="range" id="vocalReverb" min="0" max="100" value="0" step="1" />
+        <div class="val-display" id="vocalReverbVal">0 %</div>
+      </div>
+
+      <div class="slider-card vocal-fx">
+        <label for="vocalVinyl">Film Pops</label>
+        <span>Vinyl Static</span>
+        <input type="range" id="vocalVinyl" min="0" max="100" value="0" step="1" />
+        <div class="val-display" id="vocalVinylVal">0 %</div>
+      </div>
+
+      <div class="slider-card special">
+        <label for="vocalDistortion">Distortion</label>
+        <span>Vocal Crunch</span>
+        <input type="range" id="vocalDistortion" min="0" max="100" value="0" step="1" />
+        <div class="val-display" id="vocalDistortionVal">0 %</div>
+      </div>
+    </div>
+
+    <p style="font-size: 0.85rem; color: #888; margin-top: 10px;">Vocal Equalizer (with Mute Toggles):</p>
+    <div class="grid">
+      <div class="slider-card vocal-fx">
+        <label for="vocalSubBass">Sub-Bass</label>
+        <span>60 Hz</span>
+        <input type="range" id="vocalSubBass" min="-12" max="12" value="0" step="1" />
+        <div class="val-display" id="vocalSubBassVal">0 dB</div>
+        <button class="btn-mute" id="mute_vocalSubBass" onclick="toggleMuteVocal('vocalSubBass')">MUTE</button>
+      </div>
+
+      <div class="slider-card vocal-fx">
+        <label for="vocalBass">Bass / Warmth</label>
+        <span>250 Hz</span>
+        <input type="range" id="vocalBass" min="-12" max="12" value="0" step="1" />
+        <div class="val-display" id="vocalBassVal">0 dB</div>
+        <button class="btn-mute" id="mute_vocalBass" onclick="toggleMuteVocal('vocalBass')">MUTE</button>
+      </div>
+
+      <div class="slider-card vocal-fx">
+        <label for="vocalMids">Mid Range</label>
+        <span>1000 Hz</span>
+        <input type="range" id="vocalMids" min="-12" max="12" value="0" step="1" />
+        <div class="val-display" id="vocalMidsVal">0 dB</div>
+        <button class="btn-mute" id="mute_vocalMids" onclick="toggleMuteVocal('vocalMids')">MUTE</button>
+      </div>
+
+      <div class="slider-card vocal-fx">
+        <label for="vocalPresence">Clarity / Lead</label>
+        <span>4000 Hz</span>
+        <input type="range" id="vocalPresence" min="-12" max="12" value="0" step="1" />
+        <div class="val-display" id="vocalPresenceVal">0 dB</div>
+        <button class="btn-mute" id="mute_vocalPresence" onclick="toggleMuteVocal('vocalPresence')">MUTE</button>
+      </div>
+
+      <div class="slider-card vocal-fx">
+        <label for="vocalTreble">Treble / Air</label>
+        <span>10000 Hz</span>
+        <input type="range" id="vocalTreble" min="-12" max="12" value="0" step="1" />
+        <div class="val-display" id="vocalTrebleVal">0 dB</div>
+        <button class="btn-mute" id="mute_vocalTreble" onclick="toggleMuteVocal('vocalTreble')">MUTE</button>
+      </div>
+    </div>
+
+    <hr style="border: 0; border-top: 1px solid #333; margin: 25px 0;" />
+
+    <div class="section">
+      <label style="color: #ffb74d;"><strong>📢 Custom SFX Soundboard (Press Keyboard Keys 1-6 to Trigger):</strong></label>
+      <div class="sfx-grid">
+        <div class="sfx-card">
+          <div class="sfx-header">
+            <span class="sfx-key-badge">Key 1</span>
+            <input type="text" id="sfxName1" class="sfx-title-input" value="Sound FX 1" />
+          </div>
+          <input type="file" accept="audio/*" style="font-size: 0.75rem; padding: 4px;" onchange="loadCustomSFX(event, 1)" />
+          <button class="btn-sfx-play" id="sfxBtn1" onclick="playCustomSFX(1)">▶ Play Sound 1</button>
+        </div>
+
+        <div class="sfx-card">
+          <div class="sfx-header">
+            <span class="sfx-key-badge">Key 2</span>
+            <input type="text" id="sfxName2" class="sfx-title-input" value="Sound FX 2" />
+          </div>
+          <input type="file" accept="audio/*" style="font-size: 0.75rem; padding: 4px;" onchange="loadCustomSFX(event, 2)" />
+          <button class="btn-sfx-play" id="sfxBtn2" onclick="playCustomSFX(2)">▶ Play Sound 2</button>
+        </div>
+
+        <div class="sfx-card">
+          <div class="sfx-header">
+            <span class="sfx-key-badge">Key 3</span>
+            <input type="text" id="sfxName3" class="sfx-title-input" value="Sound FX 3" />
+          </div>
+          <input type="file" accept="audio/*" style="font-size: 0.75rem; padding: 4px;" onchange="loadCustomSFX(event, 3)" />
+          <button class="btn-sfx-play" id="sfxBtn3" onclick="playCustomSFX(3)">▶ Play Sound 3</button>
+        </div>
+
+        <div class="sfx-card">
+          <div class="sfx-header">
+            <span class="sfx-key-badge">Key 4</span>
+            <input type="text" id="sfxName4" class="sfx-title-input" value="Sound FX 4" />
+          </div>
+          <input type="file" accept="audio/*" style="font-size: 0.75rem; padding: 4px;" onchange="loadCustomSFX(event, 4)" />
+          <button class="btn-sfx-play" id="sfxBtn4" onclick="playCustomSFX(4)">▶ Play Sound 4</button>
+        </div>
+
+        <div class="sfx-card">
+          <div class="sfx-header">
+            <span class="sfx-key-badge">Key 5</span>
+            <input type="text" id="sfxName5" class="sfx-title-input" value="Sound FX 5" />
+          </div>
+          <input type="file" accept="audio/*" style="font-size: 0.75rem; padding: 4px;" onchange="loadCustomSFX(event, 5)" />
+          <button class="btn-sfx-play" id="sfxBtn5" onclick="playCustomSFX(5)">▶ Play Sound 5</button>
+        </div>
+
+        <div class="sfx-card">
+          <div class="sfx-header">
+            <span class="sfx-key-badge">Key 6</span>
+            <input type="text" id="sfxName6" class="sfx-title-input" value="Sound FX 6" />
+          </div>
+          <input type="file" accept="audio/*" style="font-size: 0.75rem; padding: 4px;" onchange="loadCustomSFX(event, 6)" />
+          <button class="btn-sfx-play" id="sfxBtn6" onclick="playCustomSFX(6)">▶ Play Sound 6</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="export-box">
+      <label><strong>3. Export Processed Audio & Karaoke Session:</strong></label>
+      <div class="export-controls">
+        <select id="exportFormat" style="flex:1;">
+          <option value="wav">Format: .WAV (Lossless)</option>
+          <option value="mp3">Format: .MP3 / Container</option>
+        </select>
+        <button id="downloadBtn" class="btn-download">📥 Record & Download</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="guideModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>📖 Audio FX Studio Guide</h2>
+        <button class="btn-close" onclick="toggleModal(false)">&times;</button>
+      </div>
+      <div class="modal-body">
+        <h4>1. Audio Tracks & Live Mic Setup</h4>
+        <p>Upload a track file OR click <strong>🎤 Enable Microphone Input</strong> to sing/talk live into the studio.</p>
+        <p><strong>🔊 Separate Track & Vocal Mixer:</strong> Balance music volume vs microphone volume independently.</p>
+        <p><strong>🎛️ Mic FX Mode:</strong> Choose between <em>Vocal Sliders Active</em> (processed voice) and <em>Clean Voice Bypass</em>.</p>
+        
+        <div class="tip-box">
+          💡 <strong>Pro Tip:</strong> Works best with headphones! Wearing headphones during live monitoring prevents acoustic echo and feedback loops from your speakers back into the mic.
+        </div>
+
+        <h4>2. Independent Track FX vs Vocal FX</h4>
+        <p><strong>Track FX:</strong> Apply pitch shifting, 8D audio, wobble, reverb, and EQ strictly to the backing track.</p>
+        <p><strong>Vocal FX:</strong> Apply pitch shifting, vocal harmonizer chorus, delay, reverb, and EQ strictly to your live microphone input.</p>
+
+        <h4>3. Live Custom Soundboard (Keys 1 – 6)</h4>
+        <p>Upload up to 6 custom sound effects (.mp3 or .wav). Press keyboard keys <strong>1 through 6</strong> anytime during playback or singing to fire off sound drops live!</p>
+
+        <h4>4. Recording & Exporting</h4>
+        <p>Click <strong>Record & Download</strong> to live record your audio track, vocal performance, and soundboard drops simultaneously into one clean audio file.</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const audioFile = document.getElementById('audioFile');
+    const audioPlayer = document.getElementById('audioPlayer');
+    const presetSelect = document.getElementById('presetSelect');
+    const downloadBtn = document.getElementById('downloadBtn');
+    const exportFormat = document.getElementById('exportFormat');
+    const toggleMicBtn = document.getElementById('toggleMicBtn');
+    const toggleMonitorBtn = document.getElementById('toggleMonitorBtn');
+    const toggleFxModeBtn = document.getElementById('toggleFxModeBtn');
+    
+    const canvas = document.getElementById('visualizer');
+    const canvasCtx = canvas.getContext('2d');
+
+    let audioCtx = null;
+    let sourceNode = null;
+    let micStreamNode = null;
+    let micStream = null;
+    let isMicActive = false;
+    let isMicMonitoring = true;
+    let isMicFxEnabled = true;
+
+    let masterBus = null;
+    let monitorGainNode = null;
+    let analyserNode = null;
+
+    let trackGainNode = null;
+    let micGainNode = null;
+
+    // --- TRACK FX NODES ---
+    let trackFilters = {};
+    let trackDistortionNode = null;
+    let trackWonkyDelay1 = null, trackWonkyDelay2 = null, trackWonkyLFO = null, trackWonkyLFOGain = null, trackWonkyGain = null;
+    let trackDelayNode = null, trackDelayFeedback = null, trackDelayGain = null;
+    let trackReverbDelays = [], trackReverbGainNode = null;
+    let trackVinylNoise = null, trackVinylGain = null;
+    let pannerNode = null, eightDAmount = 0, pannerAngle = 0;
+
+    // --- VOCAL FX NODES ---
+    let vocalFilters = {};
+    let vocalDistortionNode = null;
+    let vocalWonkyDelay1 = null, vocalWonkyDelay2 = null, vocalWonkyLFO = null, vocalWonkyLFOGain = null, vocalWonkyGain = null;
+    let vocalDelayNode = null, vocalDelayFeedback = null, vocalDelayGain = null;
+    let vocalReverbDelays = [], vocalReverbGainNode = null;
+    let vocalVinylNoise = null, vocalVinylGain = null;
+    let vocalChorusDelays = [], vocalChorusGainNode = null;
+
+    let recorder = null;
+    let audioChunks = [];
+    let isRecording = false;
+    let isInitialized = false;
+
+    let trackMuteStates = { subBass: false, bass: false, mids: false, presence: false, treble: false };
+    let vocalMuteStates = { vocalSubBass: false, vocalBass: false, vocalMids: false, vocalPresence: false, vocalTreble: false };
+
+    const customSFXBuffers = [null, null, null, null, null, null];
+
+    const bandDefs = [
+      { id: 'subBass', valId: 'subBassVal', freq: 60, type: 'lowshelf' },
+      { id: 'bass', valId: 'bassVal', freq: 250, type: 'peaking' },
+      { id: 'mids', valId: 'midsVal', freq: 1000, type: 'peaking' },
+      { id: 'presence', valId: 'presenceVal', freq: 4000, type: 'peaking' },
+      { id: 'treble', valId: 'trebleVal', freq: 10000, type: 'highshelf' }
+    ];
+
+    const vocalBandDefs = [
+      { id: 'vocalSubBass', valId: 'vocalSubBassVal', freq: 60, type: 'lowshelf' },
+      { id: 'vocalBass', valId: 'vocalBassVal', freq: 250, type: 'peaking' },
+      { id: 'vocalMids', valId: 'vocalMidsVal', freq: 1000, type: 'peaking' },
+      { id: 'vocalPresence', valId: 'vocalPresenceVal', freq: 4000, type: 'peaking' },
+      { id: 'vocalTreble', valId: 'vocalTrebleVal', freq: 10000, type: 'highshelf' }
+    ];
+
+    function toggleModal(show) {
+      document.getElementById('guideModal').style.display = show ? 'flex' : 'none';
+    }
+
+    function makeDistortionCurve(amount) {
+      if (amount <= 0) return null;
+      const k = amount;
+      const n_samples = 44100;
+      const curve = new Float32Array(n_samples);
+      const deg = Math.PI / 180;
+      for (let i = 0; i < n_samples; ++i) {
+        const x = (i * 2) / n_samples - 1;
+        curve[i] = ((3 + k) * x * 20 * deg) / (Math.PI + k * Math.abs(x));
+      }
+      return curve;
+    }
+
+    function createVinylCrackleNode(ctx) {
+      const bufferSize = ctx.sampleRate * 2;
+      const noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+      const output = noiseBuffer.getChannelData(0);
+
+      for (let i = 0; i < bufferSize; i++) {
+        if (Math.random() < 0.0008) {
+          output[i] = (Math.random() * 2 - 1) * 0.9; 
+        } else {
+          output[i] = (Math.random() * 2 - 1) * 0.015;
+        }
+      }
+
+      const whiteNoise = ctx.createBufferSource();
+      whiteNoise.buffer = noiseBuffer;
+      whiteNoise.loop = true;
+      whiteNoise.start();
+      return whiteNoise;
+    }
+
+    // FIX: preservesPitch disabled when Pitch / Rate slider is changed, enabling real pitch shifting
+    function updateOverallPlaybackRate() {
+      const tempo = parseFloat(document.getElementById('tempo').value);
+      const pitch = parseFloat(document.getElementById('pitch').value);
+      
+      const isPitchDefault = (pitch === 1.0);
+      audioPlayer.preservesPitch = isPitchDefault;
+      audioPlayer.webkitPreservesPitch = isPitchDefault;
+      audioPlayer.mozPreservesPitch = isPitchDefault;
+      
+      audioPlayer.playbackRate = tempo * pitch;
+    }
+
+    function routeMicInput() {
+      if (!micStreamNode) return;
+      try {
+        micStreamNode.disconnect();
+      } catch (e) {}
+
+      if (isMicFxEnabled) {
+        micStreamNode.connect(vocalFilters['vocalSubBass']);
+      } else {
+        micStreamNode.connect(micGainNode);
+      }
+    }
+
+    function initAudioContext() {
+      if (isInitialized) {
+        if (audioCtx && audioCtx.state === 'suspended') {
+          audioCtx.resume();
+        }
+        return;
+      }
+
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)({ latencyHint: 'interactive' });
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+
+      sourceNode = audioCtx.createMediaElementSource(audioPlayer);
+      masterBus = audioCtx.createGain();
+      
+      trackGainNode = audioCtx.createGain();
+      micGainNode = audioCtx.createGain();
+      trackGainNode.gain.value = 1.0;
+      micGainNode.gain.value = 1.0;
+
+      monitorGainNode = audioCtx.createGain();
+      monitorGainNode.gain.value = isMicMonitoring ? 1.0 : 0.0;
+
+      analyserNode = audioCtx.createAnalyser();
+      analyserNode.fftSize = 64;
+
+      pannerNode = audioCtx.createStereoPanner ? audioCtx.createStereoPanner() : null;
+
+      // ==========================================
+      // TRACK FX CHAIN
+      // ==========================================
+      trackDistortionNode = audioCtx.createWaveShaper();
+
+      trackWonkyDelay1 = audioCtx.createDelay();
+      trackWonkyDelay2 = audioCtx.createDelay();
+      trackWonkyDelay1.delayTime.value = 0.03;
+      trackWonkyDelay2.delayTime.value = 0.03;
+
+      trackWonkyLFO = audioCtx.createOscillator();
+      trackWonkyLFOGain = audioCtx.createGain();
+      trackWonkyLFO.frequency.value = 0;
+      trackWonkyLFOGain.gain.value = 0;
+
+      trackWonkyLFO.connect(trackWonkyLFOGain);
+      trackWonkyLFOGain.connect(trackWonkyDelay1.delayTime);
+      trackWonkyLFOGain.connect(trackWonkyDelay2.delayTime);
+      trackWonkyLFO.start();
+
+      trackWonkyGain = audioCtx.createGain();
+      trackWonkyGain.gain.value = 0;
+
+      trackDelayNode = audioCtx.createDelay();
+      trackDelayNode.delayTime.value = 0.25;
+      trackDelayFeedback = audioCtx.createGain();
+      trackDelayFeedback.gain.value = 0.35;
+      trackDelayGain = audioCtx.createGain();
+      trackDelayGain.gain.value = 0;
+
+      trackDelayNode.connect(trackDelayFeedback);
+      trackDelayFeedback.connect(trackDelayNode);
+      trackDelayNode.connect(trackDelayGain);
+
+      trackReverbGainNode = audioCtx.createGain();
+      trackReverbGainNode.gain.value = 0;
+
+      [0.03, 0.05, 0.07, 0.09].forEach(t => {
+        const d = audioCtx.createDelay();
+        d.delayTime.value = t;
+        const fb = audioCtx.createGain();
+        fb.gain.value = 0.5;
+        d.connect(fb);
+        fb.connect(d);
+        d.connect(trackReverbGainNode);
+        trackReverbDelays.push(d);
+      });
+
+      trackVinylNoise = createVinylCrackleNode(audioCtx);
+      trackVinylGain = audioCtx.createGain();
+      trackVinylGain.gain.value = 0;
+      trackVinylNoise.connect(trackVinylGain);
+      trackVinylGain.connect(trackGainNode);
+
+      let prevTrackNode = sourceNode;
+      bandDefs.forEach(band => {
+        const filter = audioCtx.createBiquadFilter();
+        filter.type = band.type;
+        filter.frequency.value = band.freq;
+        filter.gain.value = 0;
+
+        prevTrackNode.connect(filter);
+        prevTrackNode = filter;
+        trackFilters[band.id] = filter;
+      });
+
+      prevTrackNode.connect(trackDistortionNode);
+
+      trackDistortionNode.connect(trackWonkyDelay1);
+      trackDistortionNode.connect(trackWonkyDelay2);
+      trackWonkyDelay1.connect(trackWonkyGain);
+      trackWonkyDelay2.connect(trackWonkyGain);
+
+      trackDistortionNode.connect(trackDelayNode);
+      trackReverbDelays.forEach(d => trackDistortionNode.connect(d));
+
+      if (pannerNode) {
+        trackDistortionNode.connect(pannerNode);
+        trackWonkyGain.connect(pannerNode);
+        trackDelayGain.connect(pannerNode);
+        trackReverbGainNode.connect(pannerNode);
+        pannerNode.connect(trackGainNode);
+      } else {
+        trackDistortionNode.connect(trackGainNode);
+        trackWonkyGain.connect(trackGainNode);
+        trackDelayGain.connect(trackGainNode);
+        trackReverbGainNode.connect(trackGainNode);
+      }
+
+      // ==========================================
+      // VOCAL FX CHAIN
+      // ==========================================
+      vocalDistortionNode = audioCtx.createWaveShaper();
+
+      vocalWonkyDelay1 = audioCtx.createDelay();
+      vocalWonkyDelay2 = audioCtx.createDelay();
+      vocalWonkyDelay1.delayTime.value = 0.03;
+      vocalWonkyDelay2.delayTime.value = 0.03;
+
+      vocalWonkyLFO = audioCtx.createOscillator();
+      vocalWonkyLFOGain = audioCtx.createGain();
+      vocalWonkyLFO.frequency.value = 0;
+      vocalWonkyLFOGain.gain.value = 0;
+
+      vocalWonkyLFO.connect(vocalWonkyLFOGain);
+      vocalWonkyLFOGain.connect(vocalWonkyDelay1.delayTime);
+      vocalWonkyLFOGain.connect(vocalWonkyDelay2.delayTime);
+      vocalWonkyLFO.start();
+
+      vocalWonkyGain = audioCtx.createGain();
+      vocalWonkyGain.gain.value = 0;
+
+      vocalDelayNode = audioCtx.createDelay();
+      vocalDelayNode.delayTime.value = 0.25;
+      vocalDelayFeedback = audioCtx.createGain();
+      vocalDelayFeedback.gain.value = 0.35;
+      vocalDelayGain = audioCtx.createGain();
+      vocalDelayGain.gain.value = 0;
+
+      vocalDelayNode.connect(vocalDelayFeedback);
+      vocalDelayFeedback.connect(vocalDelayNode);
+      vocalDelayNode.connect(vocalDelayGain);
+
+      vocalReverbGainNode = audioCtx.createGain();
+      vocalReverbGainNode.gain.value = 0;
+
+      [0.03, 0.05, 0.07, 0.09].forEach(t => {
+        const d = audioCtx.createDelay();
+        d.delayTime.value = t;
+        const fb = audioCtx.createGain();
+        fb.gain.value = 0.5;
+        d.connect(fb);
+        fb.connect(d);
+        d.connect(vocalReverbGainNode);
+        vocalReverbDelays.push(d);
+      });
+
+      vocalChorusGainNode = audioCtx.createGain();
+      vocalChorusGainNode.gain.value = 0;
+
+      [0.015, 0.022, 0.030].forEach((ct, index) => {
+        const cd = audioCtx.createDelay();
+        cd.delayTime.value = ct;
+
+        const osc = audioCtx.createOscillator();
+        const oscGain = audioCtx.createGain();
+        osc.frequency.value = 1.5 + index * 0.5;
+        oscGain.gain.value = 0.002;
+
+        osc.connect(oscGain);
+        oscGain.connect(cd.delayTime);
+        osc.start();
+
+        cd.connect(vocalChorusGainNode);
+        vocalChorusDelays.push(cd);
+      });
+
+      vocalVinylNoise = createVinylCrackleNode(audioCtx);
+      vocalVinylGain = audioCtx.createGain();
+      vocalVinylGain.gain.value = 0;
+      vocalVinylNoise.connect(vocalVinylGain);
+      vocalVinylGain.connect(micGainNode);
+
+      let prevVocalNode = null;
+      vocalBandDefs.forEach((band, idx) => {
+        const filter = audioCtx.createBiquadFilter();
+        filter.type = band.type;
+        filter.frequency.value = band.freq;
+        filter.gain.value = 0;
+
+        if (idx > 0) prevVocalNode.connect(filter);
+        prevVocalNode = filter;
+        vocalFilters[band.id] = filter;
+      });
+
+      prevVocalNode.connect(vocalDistortionNode);
+
+      vocalDistortionNode.connect(vocalWonkyDelay1);
+      vocalDistortionNode.connect(vocalWonkyDelay2);
+      vocalWonkyDelay1.connect(vocalWonkyGain);
+      vocalWonkyDelay2.connect(vocalWonkyGain);
+
+      vocalDistortionNode.connect(vocalDelayNode);
+      vocalReverbDelays.forEach(d => vocalDistortionNode.connect(d));
+      vocalChorusDelays.forEach(cd => vocalDistortionNode.connect(cd));
+
+      vocalDistortionNode.connect(micGainNode);
+      vocalWonkyGain.connect(micGainNode);
+      vocalDelayGain.connect(micGainNode);
+      vocalReverbGainNode.connect(micGainNode);
+      vocalChorusGainNode.connect(micGainNode);
+
+      trackGainNode.connect(masterBus);
+      micGainNode.connect(masterBus);
+
+      masterBus.connect(analyserNode);
+      masterBus.connect(monitorGainNode);
+      monitorGainNode.connect(audioCtx.destination);
+
+      isInitialized = true;
+      requestAnimationFrame(updateLoop);
+    }
+
+    async function toggleMicrophone() {
+      initAudioContext();
+      if (!isMicActive) {
+        try {
+          micStream = await navigator.mediaDevices.getUserMedia({
+            audio: {
+              echoCancellation: false,
+              noiseSuppression: false,
+              autoGainControl: false
+            }
+          });
+          micStreamNode = audioCtx.createMediaStreamSource(micStream);
+          routeMicInput();
+          isMicActive = true;
+          toggleMicBtn.classList.add('active');
+          toggleMicBtn.innerText = '🎙️ Mic Active (Click to Turn Off)';
+        } catch (err) {
+          alert('Microphone access was denied or not available on this device.');
+          console.error(err);
+        }
+      } else {
+        if (micStream) {
+          micStream.getTracks().forEach(track => track.stop());
+        }
+        if (micStreamNode) {
+          micStreamNode.disconnect();
+          micStreamNode = null;
+        }
+        isMicActive = false;
+        toggleMicBtn.classList.remove('active');
+        toggleMicBtn.innerText = '🎤 Enable Microphone Input';
+      }
+    }
+
+    function toggleMicFxMode() {
+      initAudioContext();
+      isMicFxEnabled = !isMicFxEnabled;
+      routeMicInput();
+
+      if (isMicFxEnabled) {
+        toggleFxModeBtn.classList.add('active');
+        toggleFxModeBtn.innerText = '🎛️ Mic FX: Vocal Sliders Active';
+      } else {
+        toggleFxModeBtn.classList.remove('active');
+        toggleFxModeBtn.innerText = '🎙️ Mic FX: Clean Voice (Bypass)';
+      }
+    }
+
+    function toggleMicMonitoring() {
+      initAudioContext();
+      isMicMonitoring = !isMicMonitoring;
+      if (monitorGainNode) {
+        monitorGainNode.gain.value = isMicMonitoring ? 1.0 : 0.0;
+      }
+      if (isMicMonitoring) {
+        toggleMonitorBtn.classList.add('active');
+        toggleMonitorBtn.innerText = '🎧 Live Monitoring: ON';
+      } else {
+        toggleMonitorBtn.classList.remove('active');
+        toggleMonitorBtn.innerText = '🔇 Live Monitoring: OFF';
+      }
+    }
+
+    function loadCustomSFX(event, slotIndex) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      initAudioContext();
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        audioCtx.decodeAudioData(e.target.result, function(buffer) {
+          customSFXBuffers[slotIndex - 1] = buffer;
+          const userTitle = document.getElementById(`sfxName${slotIndex}`).value || `Sound FX ${slotIndex}`;
+          document.getElementById(`sfxBtn${slotIndex}`).innerText = `▶ Play ${userTitle}`;
+        });
+      };
+      reader.readAsArrayBuffer(file);
+    }
+
+    function playCustomSFX(slotIndex) {
+      initAudioContext();
+      const buffer = customSFXBuffers[slotIndex - 1];
+      if (!buffer) {
+        alert(`Please select an audio file (.mp3 or .wav) for Slot ${slotIndex} first!`);
+        return;
+      }
+
+      const sfxSource = audioCtx.createBufferSource();
+      sfxSource.buffer = buffer;
+      sfxSource.connect(masterBus);
+      sfxSource.start(0);
+    }
+
+    window.addEventListener('keydown', (e) => {
+      if (['1','2','3','4','5','6'].includes(e.key)) {
+        if (document.activeElement.tagName === 'INPUT' && document.activeElement.type === 'text') {
+          return;
+        }
+        const slot = parseInt(e.key);
+        playCustomSFX(slot);
+      }
+    });
+
+    function updateLoop() {
+      requestAnimationFrame(updateLoop);
+
+      if (eightDAmount > 0 && pannerNode && (!audioPlayer.paused || isMicActive)) {
+        pannerAngle += 0.02;
+        pannerNode.pan.value = Math.sin(pannerAngle) * (eightDAmount / 100);
+      } else if (pannerNode && eightDAmount === 0) {
+        pannerNode.pan.value = 0;
+      }
+
+      if (analyserNode) {
+        const bufferLength = analyserNode.frequencyBinCount;
+        const dataArray = new Uint8Array(bufferLength);
+        analyserNode.getByteFrequencyData(dataArray);
+
+        canvasCtx.fillStyle = '#0d0d0d';
+        canvasCtx.fillRect(0, 0, canvas.width, canvas.height);
+
+        const barWidth = (canvas.width / bufferLength) * 2.5;
+        let x = 0;
+
+        for (let i = 0; i < bufferLength; i++) {
+          const barHeight = (dataArray[i] / 255) * canvas.height;
+          canvasCtx.fillStyle = '#00e676';
+          canvasCtx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
+          x += barWidth + 2;
+        }
+      }
+    }
+
+    function toggleMuteTrack(bandId) {
+      initAudioContext();
+      trackMuteStates[bandId] = !trackMuteStates[bandId];
+      const btn = document.getElementById(`mute_${bandId}`);
+      
+      if (trackMuteStates[bandId]) {
+        btn.classList.add('active');
+        btn.innerText = 'MUTED';
+        if (trackFilters[bandId]) trackFilters[bandId].gain.value = -70;
+      } else {
+        btn.classList.remove('active');
+        btn.innerText = 'MUTE';
+        const val = parseFloat(document.getElementById(bandId).value);
+        if (trackFilters[bandId]) trackFilters[bandId].gain.value = val;
+      }
+    }
+
+    function toggleMuteVocal(bandId) {
+      initAudioContext();
+      vocalMuteStates[bandId] = !vocalMuteStates[bandId];
+      const btn = document.getElementById(`mute_${bandId}`);
+      
+      if (vocalMuteStates[bandId]) {
+        btn.classList.add('active');
+        btn.innerText = 'MUTED';
+        if (vocalFilters[bandId]) vocalFilters[bandId].gain.value = -70;
+      } else {
+        btn.classList.remove('active');
+        btn.innerText = 'MUTE';
+        const val = parseFloat(document.getElementById(bandId).value);
+        if (vocalFilters[bandId]) vocalFilters[bandId].gain.value = val;
+      }
+    }
+
+    audioFile.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        audioPlayer.src = URL.createObjectURL(file);
+      }
+    });
+
+    audioPlayer.addEventListener('play', () => {
+      initAudioContext();
+    });
+
+    document.getElementById('trackVol').addEventListener('input', (e) => {
+      initAudioContext();
+      const val = parseFloat(e.target.value);
+      document.getElementById('trackVolVal').innerText = `${val} %`;
+      if (trackGainNode) trackGainNode.gain.value = val / 100;
+    });
+
+    document.getElementById('micVol').addEventListener('input', (e) => {
+      initAudioContext();
+      const val = parseFloat(e.target.value);
+      document.getElementById('micVolVal').innerText = `${val} %`;
+      if (micGainNode) micGainNode.gain.value = val / 100;
+    });
+
+    function updateAllControls(sub, b, m, p, t, dist, pitchVal, tempoVal, wonkyVal, echoVal, reverbVal, vinylVal, eightDVal) {
+      const vals = { subBass: sub, bass: b, mids: m, presence: p, treble: t };
+      
+      bandDefs.forEach(band => {
+        const val = vals[band.id];
+        document.getElementById(band.id).value = val;
+        document.getElementById(band.valId).innerText = `${val > 0 ? '+' : ''}${val} dB`;
+        
+        trackMuteStates[band.id] = false;
+        const btn = document.getElementById(`mute_${band.id}`);
+        if (btn) {
+          btn.classList.remove('active');
+          btn.innerText = 'MUTE';
+        }
+
+        if (trackFilters[band.id]) trackFilters[band.id].gain.value = val;
+      });
+
+      document.getElementById('distortion').value = dist;
+      document.getElementById('distortionVal').innerText = `${dist} %`;
+      if (trackDistortionNode) trackDistortionNode.curve = makeDistortionCurve(dist * 4);
+
+      document.getElementById('tempo').value = tempoVal;
+      document.getElementById('tempoVal').innerText = `${tempoVal}x`;
+
+      document.getElementById('pitch').value = pitchVal;
+      document.getElementById('pitchVal').innerText = `${pitchVal}x`;
+      updateOverallPlaybackRate();
+
+      document.getElementById('wonky').value = wonkyVal;
+      document.getElementById('wonkyVal').innerText = `${wonkyVal} %`;
+      if (trackWonkyLFO && trackWonkyLFOGain && trackWonkyGain) {
+        trackWonkyLFO.frequency.value = (wonkyVal / 100) * 12;
+        trackWonkyLFOGain.gain.value = (wonkyVal / 100) * 0.015;
+        trackWonkyGain.gain.value = wonkyVal / 100;
+      }
+
+      document.getElementById('echo').value = echoVal;
+      document.getElementById('echoVal').innerText = `${echoVal} %`;
+      if (trackDelayGain) trackDelayGain.gain.value = echoVal / 100;
+
+      document.getElementById('reverb').value = reverbVal;
+      document.getElementById('reverbVal').innerText = `${reverbVal} %`;
+      if (trackReverbGainNode) trackReverbGainNode.gain.value = reverbVal / 100;
+
+      document.getElementById('vinyl').value = vinylVal;
+      document.getElementById('vinylVal').innerText = `${vinylVal} %`;
+      if (trackVinylGain) trackVinylGain.gain.value = vinylVal / 150;
+
+      document.getElementById('eightD').value = eightDVal;
+      document.getElementById('eightDVal').innerText = `${eightDVal} %`;
+      eightDAmount = eightDVal;
+    }
+
+    presetSelect.addEventListener('change', (e) => {
+      initAudioContext();
+      switch (e.target.value) {
+        case 'flat': updateAllControls(0, 0, 0, 0, 0, 0, 1.0, 1.0, 0, 0, 0, 0, 0); break;
+        case 'megaphone': updateAllControls(-12, -8, 12, 10, -10, 25, 1.05, 1.0, 0, 0, 5, 5, 0); break;
+        case 'arena': updateAllControls(6, 4, -2, 2, 4, 0, 1.0, 1.0, 0, 25, 80, 0, 40); break;
+        case 'concert': updateAllControls(4, 2, 2, 4, 6, 0, 1.0, 1.0, 0, 15, 35, 0, 75); break;
+        case 'spatial': updateAllControls(2, 2, 0, 2, 2, 0, 1.0, 1.0, 0, 15, 30, 0, 100); break;
+        case 'harmony': updateAllControls(2, 2, 4, 4, 2, 0, 1.0, 1.0, 0, 10, 20, 0, 0); break;
+        case 'radio': updateAllControls(-12, -8, 6, 4, -12, 5, 1.0, 1.0, 0, 0, 0, 10, 0); break;
+        case 'vintage': updateAllControls(-12, -12, 8, -2, -12, 20, 0.95, 1.0, 25, 0, 15, 60, 0); break;
+        case 'walkie': updateAllControls(-12, -10, 12, 8, -12, 45, 1.0, 1.0, 0, 0, 0, 5, 0); break;
+        case 'meme': updateAllControls(12, 12, -4, 6, -6, 75, 1.0, 1.0, 0, 0, 0, 0, 0); break;
+        case 'distortion': updateAllControls(0, 4, 8, 8, 4, 95, 1.0, 1.0, 0, 0, 0, 0, 0); break;
+        case 'underwater': updateAllControls(8, 4, -8, -12, -12, 0, 0.9, 1.0, 0, 0, 50, 0, 0); break;
+        case 'squeaky': updateAllControls(-4, 0, 4, 6, 4, 0, 1.6, 1.0, 0, 0, 0, 0, 0); break;
+        case 'deep': updateAllControls(6, 6, 0, -4, -6, 5, 0.65, 1.0, 0, 0, 15, 0, 0); break;
+      }
+    });
+
+    document.getElementById('tempo').addEventListener('input', (e) => {
+      const val = parseFloat(e.target.value);
+      document.getElementById('tempoVal').innerText = `${val}x`;
+      updateOverallPlaybackRate();
+    });
+
+    document.getElementById('pitch').addEventListener('input', (e) => {
+      const val = parseFloat(e.target.value);
+      document.getElementById('pitchVal').innerText = `${val}x`;
+      updateOverallPlaybackRate();
+    });
+
+    document.getElementById('eightD').addEventListener('input', (e) => {
+      const val = parseFloat(e.target.value);
+      document.getElementById('eightDVal').innerText = `${val} %`;
+      eightDAmount = val;
+    });
+
+    document.getElementById('wonky').addEventListener('input', (e) => {
+      const val = parseFloat(e.target.value);
+      document.getElementById('wonkyVal').innerText = `${val} %`;
+      if (trackWonkyLFO && trackWonkyLFOGain && trackWonkyGain) {
+        trackWonkyLFO.frequency.value = (val / 100) * 12;
+        trackWonkyLFOGain.gain.value = (val / 100) * 0.015;
+        trackWonkyGain.gain.value = val / 100;
+      }
+    });
+
+    document.getElementById('echo').addEventListener('input', (e) => {
+      const val = parseFloat(e.target.value);
+      document.getElementById('echoVal').innerText = `${val} %`;
+      if (trackDelayGain) trackDelayGain.gain.value = val / 100;
+    });
+
+    document.getElementById('reverb').addEventListener('input', (e) => {
+      const val = parseFloat(e.target.value);
+      document.getElementById('reverbVal').innerText = `${val} %`;
+      if (trackReverbGainNode) trackReverbGainNode.gain.value = val / 100;
+    });
+
+    document.getElementById('vinyl').addEventListener('input', (e) => {
+      const val = parseFloat(e.target.value);
+      document.getElementById('vinylVal').innerText = `${val} %`;
+      if (trackVinylGain) trackVinylGain.gain.value = val / 150;
+    });
+
+    document.getElementById('distortion').addEventListener('input', (e) => {
+      const val = parseFloat(e.target.value);
+      document.getElementById('distortionVal').innerText = `${val} %`;
+      if (trackDistortionNode) trackDistortionNode.curve = makeDistortionCurve(val * 4);
+    });
+
+    bandDefs.forEach(band => {
+      document.getElementById(band.id).addEventListener('input', (e) => {
+        const val = parseFloat(e.target.value);
+        document.getElementById(band.valId).innerText = `${val > 0 ? '+' : ''}${val} dB`;
+        if (trackFilters[band.id] && !trackMuteStates[band.id]) {
+          trackFilters[band.id].gain.value = val;
+        }
+      });
+    });
+
+    document.getElementById('vocalPitch').addEventListener('input', (e) => {
+      const val = parseInt(e.target.value);
+      document.getElementById('vocalPitchVal').innerText = `${val > 0 ? '+' : ''}${val} semitones`;
+    });
+
+    document.getElementById('harmonizer').addEventListener('input', (e) => {
+      const val = parseFloat(e.target.value);
+      document.getElementById('harmonizerVal').innerText = `${val} %`;
+      if (vocalChorusGainNode) vocalChorusGainNode.gain.value = val / 100;
+    });
+
+    document.getElementById('vocalWonky').addEventListener('input', (e) => {
+      const val = parseFloat(e.target.value);
+      document.getElementById('vocalWonkyVal').innerText = `${val} %`;
+      if (vocalWonkyLFO && vocalWonkyLFOGain && vocalWonkyGain) {
+        vocalWonkyLFO.frequency.value = (val / 100) * 12;
+        vocalWonkyLFOGain.gain.value = (val / 100) * 0.015;
+        vocalWonkyGain.gain.value = val / 100;
+      }
+    });
+
+    document.getElementById('vocalEcho').addEventListener('input', (e) => {
+      const val = parseFloat(e.target.value);
+      document.getElementById('vocalEchoVal').innerText = `${val} %`;
+      if (vocalDelayGain) vocalDelayGain.gain.value = val / 100;
+    });
+
+    document.getElementById('vocalReverb').addEventListener('input', (e) => {
+      const val = parseFloat(e.target.value);
+      document.getElementById('vocalReverbVal').innerText = `${val} %`;
+      if (vocalReverbGainNode) vocalReverbGainNode.gain.value = val / 100;
+    });
+
+    document.getElementById('vocalVinyl').addEventListener('input', (e) => {
+      const val = parseFloat(e.target.value);
+      document.getElementById('vocalVinylVal').innerText = `${val} %`;
+      if (vocalVinylGain) vocalVinylGain.gain.value = val / 150;
+    });
+
+    document.getElementById('vocalDistortion').addEventListener('input', (e) => {
+      const val = parseFloat(e.target.value);
+      document.getElementById('vocalDistortionVal').innerText = `${val} %`;
+      if (vocalDistortionNode) vocalDistortionNode.curve = makeDistortionCurve(val * 4);
+    });
+
+    vocalBandDefs.forEach(band => {
+      document.getElementById(band.id).addEventListener('input', (e) => {
+        const val = parseFloat(e.target.value);
+        document.getElementById(band.valId).innerText = `${val > 0 ? '+' : ''}${val} dB`;
+        if (vocalFilters[band.id] && !vocalMuteStates[band.id]) {
+          vocalFilters[band.id].gain.value = val;
+        }
+      });
+    });
+
+    downloadBtn.addEventListener('click', () => {
+      initAudioContext();
+      const format = exportFormat.value;
+
+      if (!isRecording) {
+        const dest = audioCtx.createMediaStreamDestination();
+        masterBus.connect(dest);
+
+        recorder = new MediaRecorder(dest.stream);
+        audioChunks = [];
+
+        recorder.ondataavailable = (e) => audioChunks.push(e.data);
+        recorder.onstop = () => {
+          const ext = format === 'mp3' ? 'mp3' : 'wav';
+          const blob = new Blob(audioChunks, { type: `audio/${ext}` });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `studio_session.${ext}`;
+          a.click();
+        };
+
+        recorder.start();
+        if (audioPlayer.src) {
+          audioPlayer.currentTime = 0;
+          audioPlayer.play();
+        }
+        isRecording = true;
+        downloadBtn.innerText = '🔴 Recording... Click to Save';
+        downloadBtn.style.backgroundColor = '#ff5252';
+      } else {
+        recorder.stop();
+        if (audioPlayer.src) {
+          audioPlayer.pause();
+        }
+        isRecording = false;
+        downloadBtn.innerText = '📥 Record & Download';
+        downloadBtn.style.backgroundColor = '#00e676';
+      }
+    });
+  </script>
+</body>
+</html>
